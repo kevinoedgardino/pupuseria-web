@@ -64,6 +64,6 @@ Route::get('/pedidos/filter-cliente',[DetallePedidoController::class,'filterClie
 /**
  * Rutas para el PDF
  */
-Route::get('/pedidos/reporte',[PDFController::class, 'pdfPedidos']);
+Route::get('/pedidos/reporte',[PDFController::class, 'pdfPedidos'])->name('pdfPedidos');
 
 Auth::routes();
