@@ -190,6 +190,19 @@
           right
           transition="slide-x-transition"
         >
+        <v-btn
+          color="blue-grey"
+          class="ma-2 white--text"
+          href="/pedidos/reporte"
+        >
+          Generar PDF
+          <v-icon
+            right
+            dark
+          >
+            picture_as_pdf
+          </v-icon>
+        </v-btn>
           <v-hover v-model="hover">
             <v-icon
               color="success lighten-1"
