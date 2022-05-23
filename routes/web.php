@@ -5,6 +5,7 @@ use App\Http\Controllers\DetallePedidoController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\TipoProductoController;
 use App\Http\Controllers\IndexerController;
+use App\Http\Controllers\PDFController;
 
 /*
 |--------------------------------------------------------------------------
@@ -59,5 +60,10 @@ Route::put('/pedidos/update-pedido',[DetallePedidoController::class,'updatePedid
 Route::put('/pedidos/change',[DetallePedidoController::class,'cambiarEstado']);
 Route::get('/pedidos/filter',[DetallePedidoController::class,'filterState']);
 Route::get('/pedidos/filter-cliente',[DetallePedidoController::class,'filterCliente']);
+
+/**
+ * Rutas para el PDF
+ */
+Route::get('/pedidos/reporte',[PDFController::class, 'pdfPedidos']);
 
 Auth::routes();
