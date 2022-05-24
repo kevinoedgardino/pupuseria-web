@@ -34,4 +34,34 @@ class PDFController extends Controller
             $pdf = \PDF::loadView('admin.listPedidosPDF',compact('pedidos'));
             return $pdf->stream('pedidos.pdf');
     }
+
+    public function pdfFechaPedidos(Request $request) {
+
+        $fechainicio = $request->fechaInicio;
+        $fechafin = $request->fechaFin;
+        $fechas = array($fechainicio,$fechafin);
+
+        $pedidos = DetallePedido::join('clientes','detalle_pedidos.cliente_id','=','clientes.id')
+            ->join('pedidos','detalle_pedidos.pedido_id','=','pedidos.id')
+            ->join('productos','detalle_pedidos.producto_id','=','productos.id')
+            ->select(
+                'detalle_pedidos.id',
+                'clientes.id as clienteId',
+                'detalle_pedidos.producto_id',
+                'pedidos.id as pedidoId',
+                'clientes.nombre as cliente',
+                'clientes.telefono',
+                'productos.nombre as producto',
+                'pedidos.cantidad',
+                'pedidos.total',
+                'pedidos.fecha',
+                'pedidos.hora',
+                'pedidos.estado'
+            )
+            ->where('pedidos.fecha','>=',$fechainicio)
+            ->where('pedidos.fecha','<=',$fechafin)
+            ->orderBy('id','asc')->get();
+            $pdf = \PDF::loadView('admin.listPedidosFechaPDF',compact('pedidos'));
+            return $pdf->stream('pedidos.pdf');
+    }          
 }

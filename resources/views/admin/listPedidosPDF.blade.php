@@ -30,6 +30,7 @@
                 </tr>
             </thead>
             <tbody>
+                <?php $count = 0 ?>
                 @foreach ($pedidos as $pedido)
                     <tr>
                         <td>{{ $pedido->cliente }}</td>
@@ -41,9 +42,11 @@
                         <td>{{ $pedido->fecha }}</td>
                         <td>{{ $pedido->hora }}</td>
                     </tr>
+                    {{$count++}}
                 @endforeach
             </tbody>
         </table>
+        <div class="total"><h3>Total de pedidos: {{$count}}</h3></div>
         <footer>
             <?php $year = date("Y"); $date = date("d-m-y"); $hour = date("h:i:s") ?>
             <span id="year">PupuseriaWEB {{ $year }}</span>

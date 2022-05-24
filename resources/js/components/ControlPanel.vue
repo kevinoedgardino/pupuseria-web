@@ -183,14 +183,7 @@
     <v-card-title>
       Registro
       <div class="text-center ml-5">
-        <v-badge
-          :value="hover"
-          color="green accent-5"
-          content="Estados: E = Entregado, P = Pendiente, C = Cancelado"
-          right
-          transition="slide-x-transition"
-        >
-        <v-btn
+         <v-btn
           color="blue-grey"
           class="ma-2 white--text"
           href="/pedidos/reporte"
@@ -203,6 +196,64 @@
             picture_as_pdf
           </v-icon>
         </v-btn>
+      <v-dialog
+        transition="dialog-bottom-transition"
+        max-width="600"
+      >
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+            color="blue-grey"
+            class="ma-2 white--text"
+            v-bind="attrs"
+            v-on="on"
+          >
+          PDF parametrizado
+          <v-icon right light>calendar_month</v-icon>
+          </v-btn>
+        </template>
+        <template v-slot:default="dialog">
+          <v-card>
+            <v-toolbar
+              color="primary"
+              dark
+              class="h3"
+            >Elige el rango de fechas para generar el reporte <v-icon class="ml-2">event_available</v-icon>
+            </v-toolbar>
+            <v-card-text>
+              <p class="text-center mt-6 h5">Fecha desde el {{ dateRangeText }}</p>
+            </v-card-text>
+            <div class="d-flex justify-content-center">
+              <v-date-picker
+                  class="mt-4"
+                  v-model="dates"
+                  range
+                >
+              </v-date-picker>
+            </div>
+            <v-card-actions class="justify-end">
+              <v-btn
+                text
+                class="border border-success"
+                @click="generarPdf"
+                color="green"
+              >Generar</v-btn>
+              <v-btn
+                text
+                class="border border-danger"
+                @click="dialog.value = false; dates = []"
+                color="red"
+              >Cancelar</v-btn>
+            </v-card-actions>
+          </v-card>
+        </template>
+      </v-dialog>
+      <v-badge
+          :value="hover"
+          color="green accent-5"
+          content="Estados: E = Entregado, P = Pendiente, C = Cancelado"
+          right
+          transition="slide-x-transition"
+        >
           <v-hover v-model="hover">
             <v-icon
               color="success lighten-1"
@@ -257,6 +308,7 @@
            cantidad: null,
            total: null,
          },
+         dates: [],
          tipos: [],
          dialog: false,
          search: '',
@@ -302,6 +354,9 @@
       },
     computedDateFormatted () {
         return this.formatDate(this.date)
+      },
+      dateRangeText () {
+        return this.dates.join(' hasta el ')
       },
   },
   watch: {
@@ -353,6 +408,15 @@
           me.loader = false;
         });
      me.loader = true;
+    },
+    generarPdf(e) {
+
+      let fechas = this.dates;
+      e.preventDefault()
+      if (fechas.length === 0 || fechas.length === 1) alert('Debes seleccionar 2 fechas')
+      else if (fechas.length === 2) {
+        location.replace(`pedidos/reportefecha?fechaInicio=${fechas[0]}&fechaFin=${fechas[1]}`)
+      }
     },
     formatDate (date) {
         if (!date) return null

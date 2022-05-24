@@ -27,6 +27,13 @@ header {
     line-height: 30px;
 }
 
+header h5 {
+    position: absolute;
+    top: -15px;
+    right: 25px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
 footer {
     position: fixed;
     bottom: 0cm;
@@ -62,6 +69,10 @@ header h3, h4 {
 
 #ped td {
     font-size: 10px;
+}
+
+.total {
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 .page_break {
