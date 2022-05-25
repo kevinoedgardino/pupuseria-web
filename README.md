@@ -1,6 +1,6 @@
 # PupuseriaWEB
 
-Aplicacion web enfocada al los negocios de pupuserias. Creada con Laravel 9 y Vue 3
+Aplicacion web enfocada los negocios de pupuserias. Creada con Laravel 9 y Vue 2.
 
 ## Instalación
 
