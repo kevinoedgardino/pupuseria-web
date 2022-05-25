@@ -13,7 +13,7 @@
             <img src="img/logo-pupuseria-web.png" id="logo" alt="Logo">
         </div>
         <h3>PupuseriaWEB</h3>
-        <h4>Reporte general de los pedidos</h4>
+        <h4>Reporte parametrizado de los pedidos</h4>
         <?php 
             $url = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
             $stri = parse_str($url, $fechas);
