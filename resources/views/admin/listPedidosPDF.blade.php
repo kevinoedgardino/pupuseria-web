@@ -10,7 +10,7 @@
 <body>
     <header>
         <div class="header_logo">
-            <img src="img/logo-pupuseria-web.png" id="logo" alt="Logo">
+            
         </div>
         <h3>PupuseriaWEB</h3>
         <h4>Reporte general de los pedidos</h4>
