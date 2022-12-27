@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\TipoProducto;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -14,6 +15,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // \App\Models\User::factory(10)->create();
+        $tipoProducto = new TipoProducto();
+        $tipoProducto->nombre = "Pupusa";
+        $tipoProducto->save();
+
+        $tipoProducto = new TipoProducto();
+        $tipoProducto->nombre = "Bebida";
+        $tipoProducto->save();
     }
 }
