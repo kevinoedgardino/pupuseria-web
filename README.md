@@ -25,6 +25,14 @@ Usa el archivo ` .env-example ` para crear el archivo `.env` y hacer la conexió
   php artisan migrate
 ```
 
+### Ejecuta el seeder
+
+El seeder insertará datos de inicio importantes en la base de datos.
+
+```bash
+   php artisan db:seed 
+```
+
 ### Genera la llave
 
 ```bash
