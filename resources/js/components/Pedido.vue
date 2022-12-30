@@ -206,7 +206,6 @@ import Vue from 'vue';
             }
             //me.pedido.total = total;
             me.pedido.total = parseFloat(total).toFixed(2);
-            axios.put('/pedidos/update-pedido',me.pedido)
      me.loader = true;
     },
     fetchProductos() {
