@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/kevinoedgardino/pupuseria-web/main/public/img/logo-pupuseria-web.png" width="400"></p>
+
 # PupuseriaWEB
 
 Aplicacion web enfocada a los negocios de pupuserias. Creada con Laravel 9 y Vue 2.
