@@ -48,7 +48,7 @@ class DetallePedidoController extends Controller
             $cliente = new Cliente();
             $cliente->nombre = $request->nombre;
             $cliente->telefono = $request->telefono;
-            if ($cliente->save()<=0) {
+            if ($cliente->save() <= 0) {
                 $errors++;
             }
 
@@ -61,7 +61,7 @@ class DetallePedidoController extends Controller
                 $pedido->hora = $request->hora;
                 $pedido->estado = "P";
                 $pedido->total = $v['tl'];
-                if ($pedido->save()<=0) {
+                if ($pedido->save() <= 0) {
                     $errors++;
                 }
 
@@ -70,7 +70,7 @@ class DetallePedidoController extends Controller
                 $detalle->producto_id = $v['pd'];
                 $detalle->cliente_id = $cliente->id;
                 $detalle->pedido_id = $pedido->id;
-                if ($detalle->save()<=0) {
+                if ($detalle->save() <= 0) {
                     $errors++;
                 }
             }
@@ -78,14 +78,12 @@ class DetallePedidoController extends Controller
             //consultando si hubieron errores
             if ($errors == 0) {
                 DB::commit();
-                return response()->json(['status'=>'OK','data'=>$detalle],201);
-            }
-            else {
+                return response()->json(['status' => 'OK', 'data' => $detalle], 201);
+            } else {
                 DB::rollBack();
-                return response()->json(['status'=>'FAIL','data'=>$detalle],209);
+                return response()->json(['status' => 'FAIL', 'data' => $detalle], 209);
             }
-        } 
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             return $e->getMessage();
         }
     }
@@ -99,14 +97,13 @@ class DetallePedidoController extends Controller
     public function show()
     {
         try {
-            $detalle = DetallePedido::join('clientes','detalle_pedidos.cliente_id','=','clientes.id')
-            ->join('pedidos','detalle_pedidos.pedido_id','=','pedidos.id')
-            ->join('productos','detalle_pedidos.producto_id','=','productos.id')
-            ->select('detalle_pedidos.id','clientes.id as clienteId','detalle_pedidos.producto_id','pedidos.id as pedidoId','clientes.nombre as cliente','clientes.telefono','productos.nombre as producto','pedidos.cantidad','pedidos.total','pedidos.fecha','pedidos.hora','pedidos.estado')
-            ->orderBy('id','asc')->get();
+            $detalle = DetallePedido::join('clientes', 'detalle_pedidos.cliente_id', '=', 'clientes.id')
+                ->join('pedidos', 'detalle_pedidos.pedido_id', '=', 'pedidos.id')
+                ->join('productos', 'detalle_pedidos.producto_id', '=', 'productos.id')
+                ->select('detalle_pedidos.id', 'clientes.id as clienteId', 'detalle_pedidos.producto_id', 'pedidos.id as pedidoId', 'clientes.nombre as cliente', 'clientes.telefono', 'productos.nombre as producto', 'pedidos.cantidad', 'pedidos.total', 'pedidos.fecha', 'pedidos.hora', 'pedidos.estado')
+                ->orderBy('id', 'desc')->get();
             return $detalle;
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             return $e->getMessage();
         }
     }
@@ -127,16 +124,15 @@ class DetallePedidoController extends Controller
      */
     public function updateCliente(Request $request)
     {
-        
+
         try {
             $cliente = Cliente::findOrFail($request->id);
             $cliente->nombre = $request->nombre;
             $cliente->telefono = $request->telefono;
-            if ($cliente->save()>=1) {
-                return response()->json(['status'=>'OK','data'=>$cliente],202);
+            if ($cliente->save() >= 1) {
+                return response()->json(['status' => 'OK', 'data' => $cliente], 202);
             }
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             return $e->getMessage();
         }
     }
@@ -146,35 +142,36 @@ class DetallePedidoController extends Controller
      */
     public function updatePedido(Request $request)
     {
-        
+
         try {
             $errors = 0;
             DB::beginTransaction();
 
-            $pedido = Pedido::findOrFail($request->pedidoId);
-            $pedido->cantidad = $request->cantidad;
-            $pedido->total = $request->total;
-            if ($pedido->save()<=0) {
-                $errors++;
-            }
+            foreach ($request->pedido as $key => $value) {
+                $pedido = Pedido::findOrFail($value['pedidoId']);
+                $pedido->cantidad = $value['cantidad'];
+                $producto = Producto::findOrFail($value['producto_id']);
+                $pedido->total = $producto->precio * $value['cantidad'];
+                if ($pedido->save() <= 0) {
+                    $errors++;
+                }
 
-            $detalle = DetallePedido::findOrFail($request->id);
-            $detalle->producto_id = $request->producto_id;
-            if ($detalle->save()<=0) {
-                $errors++;
+                $detalle = DetallePedido::findOrFail($value['id']);
+                $detalle->producto_id = $value['producto_id'];
+                if ($detalle->save() <= 0) {
+                    $errors++;
+                }
             }
 
             //consultando si hubieron errores
             if ($errors == 0) {
                 DB::commit();
-                return response()->json(['status'=>'ok','data'=>$pedido],202);
-            }
-            else {
+                return response()->json(['status' => 'ok'], 200);
+            } else {
                 DB::rollBack();
-                return response()->json(['status'=>'fail','data'=>$pedido],209);
+                return response()->json(['status' => 'fail'], 209);
             }
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             return $e->getMessage();
         }
     }
@@ -186,16 +183,21 @@ class DetallePedidoController extends Controller
      * P = Pendiente
      * C = Cancelado
      */
-    public function cambiarEstado(Request $request) {
+    public function cambiarEstado(Request $request)
+    {
+        DB::beginTransaction();
+        $errors = 0;
         try {
-            $pedido = Pedido::findOrFail($request->id);
-            $pedido->estado = $request->estado;
-            if ($pedido->save()>=1) {
-                return response()->json(['status'=>'OK','data'=>$pedido],202);
+            foreach ($request->pedido as $key => $pedidoObj) {
+                $pedido = Pedido::findOrFail($pedidoObj['id']);
+                $pedido->estado = $request->estado;
+                if ($pedido->save() < 1) $errors++;
             }
-        }
-        catch (\Exception $e) {
-            $e->getMessage();
+            if ($errors === 0) DB::commit();
+            else DB::rollBack();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(["message" => $e->getMessage()], 500);
         }
     }
 
@@ -207,34 +209,77 @@ class DetallePedidoController extends Controller
      * C = Cancelado
      * 
      */
-    public function filterState(Request $request) {
+    public function filterState(Request $request)
+    {
         $estado = $request->state;
         try {
-            $pedido = DetallePedido::join('clientes','detalle_pedidos.cliente_id','=','clientes.id')
-            ->join('pedidos','detalle_pedidos.pedido_id','=','pedidos.id')
-            ->join('productos','detalle_pedidos.producto_id','=','productos.id')
-            ->select('detalle_pedidos.id','clientes.id as clienteId','detalle_pedidos.producto_id','pedidos.id as pedidoId','clientes.nombre as cliente','clientes.telefono','productos.nombre as producto','pedidos.cantidad','pedidos.total','pedidos.fecha','pedidos.hora','pedidos.estado')
-            ->where('pedidos.estado','=',$estado)
-            ->orderBy('id','asc')->get();
-            return $pedido;
-        } 
-        catch (\Exception $e) {
+
+            if ($estado === "P") {
+                $clientes = DetallePedido::join('clientes', 'detalle_pedidos.cliente_id', '=', 'clientes.id')
+                    ->join('pedidos', 'detalle_pedidos.pedido_id', '=', 'pedidos.id')
+                    ->select('clientes.id', 'clientes.nombre', 'clientes.telefono')
+                    ->groupBy('clientes.id', 'clientes.nombre', 'clientes.telefono')
+                    ->where('pedidos.estado', '=', 'P')
+                    ->orderBy('id', 'desc')
+                    ->get();
+
+                $ordenesList = [];
+                $total = 0.0;
+
+                for ($i = 0; $i < $clientes->count(); $i++) {
+
+                    $pedidos = DetallePedido::join('clientes', 'detalle_pedidos.cliente_id', '=', 'clientes.id')
+                        ->join('pedidos', 'detalle_pedidos.pedido_id', '=', 'pedidos.id')
+                        ->join('productos', 'detalle_pedidos.producto_id', '=', 'productos.id')
+                        ->select('detalle_pedidos.id', 'clientes.id as clienteId', 'detalle_pedidos.producto_id', 'pedidos.id as pedidoId', 'clientes.telefono', 'productos.nombre as producto', 'pedidos.cantidad', 'pedidos.total', 'pedidos.fecha', 'pedidos.hora', 'pedidos.estado')
+                        ->where('pedidos.estado', '=', $estado)
+                        ->where('clientes.id', $clientes[$i]->id)
+                        ->orderBy('id', 'asc')->get();
+
+                    $clientePedidos = [];
+
+                    for ($l = 0; $l < $pedidos->count(); $l++) {
+                        $total += $pedidos[$l]->total;
+                        array_push($clientePedidos, $pedidos[$l]);
+                    }
+
+                    array_push($ordenesList, [
+                        "id" => $clientes[$i]->id,
+                        "cliente" => $clientes[$i]->nombre,
+                        "telefono" => $clientes[$i]->telefono,
+                        "total" => number_format((float)$total, 2, '.', ''),
+                        "pedidos" => $clientePedidos
+                    ]);
+                }
+
+                return $ordenesList;
+            }
+            if ($estado === "E") {
+                $pedido = DetallePedido::join('clientes', 'detalle_pedidos.cliente_id', '=', 'clientes.id')
+                    ->join('pedidos', 'detalle_pedidos.pedido_id', '=', 'pedidos.id')
+                    ->join('productos', 'detalle_pedidos.producto_id', '=', 'productos.id')
+                    ->select('detalle_pedidos.id', 'clientes.id as clienteId', 'detalle_pedidos.producto_id', 'pedidos.id as pedidoId', 'clientes.nombre as cliente', 'clientes.telefono', 'productos.nombre as producto', 'pedidos.cantidad', 'pedidos.total', 'pedidos.fecha', 'pedidos.hora', 'pedidos.estado')
+                    ->where('pedidos.estado', '=', $estado)
+                    ->orderBy('id', 'asc')->get();
+                return $pedido;
+            }
+        } catch (\Exception $e) {
             return $e->getMessage();
         }
     }
 
-    public function filterCliente(Request $request) {
+    public function filterCliente(Request $request)
+    {
         $cliente = $request->client;
         try {
-            $pedido = DetallePedido::join('clientes','detalle_pedidos.cliente_id','=','clientes.id')
-            ->join('pedidos','detalle_pedidos.pedido_id','=','pedidos.id')
-            ->join('productos','detalle_pedidos.producto_id','=','productos.id')
-            ->select('detalle_pedidos.id','clientes.id as clienteId','pedidos.id as pedidoId','clientes.nombre as cliente','clientes.telefono','productos.nombre as producto','pedidos.cantidad','pedidos.total','pedidos.fecha','pedidos.hora','pedidos.estado')
-            ->where('clientes.nombre','=',$cliente)
-            ->orderBy('id','asc')->get();
+            $pedido = DetallePedido::join('clientes', 'detalle_pedidos.cliente_id', '=', 'clientes.id')
+                ->join('pedidos', 'detalle_pedidos.pedido_id', '=', 'pedidos.id')
+                ->join('productos', 'detalle_pedidos.producto_id', '=', 'productos.id')
+                ->select('detalle_pedidos.id', 'clientes.id as clienteId', 'pedidos.id as pedidoId', 'clientes.nombre as cliente', 'clientes.telefono', 'productos.nombre as producto', 'pedidos.cantidad', 'pedidos.total', 'pedidos.fecha', 'pedidos.hora', 'pedidos.estado')
+                ->where('clientes.nombre', '=', $cliente)
+                ->orderBy('id', 'asc')->get();
             return $pedido;
-        } 
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             return $e->getMessage();
         }
     }
