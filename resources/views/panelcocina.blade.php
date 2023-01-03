@@ -8,11 +8,11 @@
 
 @section('content')
 <div id="app">
-    <v-app>
+    <div style="width: 100%; height: 100vh">
         <template>
             <control-cocina></control-cocina>
         </template>
-    </v-app>
+    </div>
 </div>
 @stop
 
