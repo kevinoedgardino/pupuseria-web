@@ -6,7 +6,7 @@
                     <p><b>1# - {{ pedidos[0].cliente }}</b></p>
                     <div class="pedidos-cont">
                         <p><b>Pedidos:</b></p>
-                        <ul class="d-flex flex-wrap flex-column">
+                        <ul class="high-panel d-flex flex-wrap flex-column">
                             <li v-for="orden in pedidos[0].pedidos">
                                 {{ orden.producto }}: {{ orden.cantidad }}
                             </li>
@@ -19,7 +19,7 @@
                     <p><b>2# - {{ pedidos[1].cliente }}</b></p>
                     <div class="pedidos-cont">
                         <p><b>Pedidos:</b></p>
-                        <ul class="d-flex flex-wrap flex-column">
+                        <ul class="high-panel d-flex flex-wrap flex-column">
                             <li v-for="orden in pedidos[1].pedidos">
                                 {{ orden.producto }}: {{ orden.cantidad }}
                             </li>
@@ -32,7 +32,7 @@
                     <p><b>3# - {{ pedidos[2].cliente }}</b></p>
                     <div class="pedidos-cont">
                         <p><b>Pedidos:</b></p>
-                        <ul class="d-flex flex-wrap flex-column">
+                        <ul class="low-panel d-flex flex-wrap flex-column">
                             <li v-for="orden in pedidos[2].pedidos">
                                 {{ orden.producto }}: {{ orden.cantidad }}
                             </li>
@@ -45,7 +45,7 @@
                     <p><b>4# - {{ pedidos[3].cliente }}</b></p>
                     <div class="pedidos-cont">
                         <p><b>Pedidos:</b></p>
-                        <ul class="d-flex flex-wrap flex-column">
+                        <ul class="low-panel d-flex flex-wrap flex-column">
                             <li v-for="orden in pedidos[3].pedidos">
                                 {{ orden.producto }}: {{ orden.cantidad }}
                             </li>
@@ -58,7 +58,7 @@
                     <p><b>5# - {{ pedidos[4].cliente }}</b></p>
                     <div class="pedidos-cont">
                         <p><b>Pedidos:</b></p>
-                        <ul class="d-flex flex-wrap flex-column">
+                        <ul class="low-panel d-flex flex-wrap flex-column">
                             <li v-for="orden in pedidos[4].pedidos">
                                 {{ orden.producto }}: {{ orden.cantidad }}
                             </li>
@@ -106,8 +106,12 @@ main {
     color: #000;
 }
 
-ul {
+.high-panel {
     max-height: 250px;
+}
+
+.low-panel {
+    max-height: 170px;
 }
 
 .parent {
