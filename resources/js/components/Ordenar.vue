@@ -47,7 +47,7 @@
                 <v-list-tile-action>
                   <div class="d-flex">
                     <h5 style="margin-right: 10px;"><b>{{ pupusas.nombre }}</b></h5>
-                    <number-input v-model="pupusas.cantidad" :min="1" inline center controls rounded></number-input>
+                    <number-input v-model="pupusas.cantidad" :min="0" inline center controls rounded></number-input>
                   </div>
                   <br />
                   <hr />
@@ -205,6 +205,14 @@ export default {
         hora: '',
         fecha: ''
       }
+      me.pupusas.map(p => {
+        p.cantidad = 0
+        return p
+      })
+      me.bebidas.map(b => {
+        b.cantidad = 0
+        return b
+      })
     },
     resetValidation() {
       let me = this;
