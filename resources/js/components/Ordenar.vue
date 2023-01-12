@@ -16,10 +16,10 @@
                   required></v-text-field>
               </validation-provider>
               <validation-provider v-slot="{ errors }" name="Numero de teléfono" :rules="{
-  required: true,
-  digits: 8,
-  regex: /^[0-9]+$/
-}">
+                required: true,
+                digits: 8,
+                regex: /^[0-9]+$/
+              }">
                 <v-text-field v-model="orden.telefono" :counter="8" :error-messages="errors" label="Numero de teléfono"
                   filled required></v-text-field>
               </validation-provider>
@@ -37,6 +37,11 @@
                 </v-list-tile-action>
               </v-list-tile>
             </v-list>
+          </v-card>
+          <v-card class="m-4" v-else>
+            <v-card-title>
+              <b>No hay productos disponibles.</b>
+            </v-card-title>
           </v-card>
           <v-card class="m-4" v-if="selected.length">
             <v-card-title>
@@ -74,8 +79,13 @@
               </v-list-tile>
             </v-list>
           </v-card>
-          <v-btn v-if="orden.nombre" class="btnCont mb-5 d-flex m-auto" x-large rounded color="success" dark :disabled="!validForm"
-            @click="saveOrden()">
+          <v-card class="m-4" v-else>
+            <v-card-title>
+              <b>No hay productos disponibles.</b>
+            </v-card-title>
+          </v-card>
+          <v-btn v-if="orden.nombre" class="btnCont mb-5 d-flex m-auto" x-large rounded color="success" dark
+            :disabled="!validForm" @click="saveOrden()">
             Hacer pedido
             <v-icon>notification_add</v-icon>
           </v-btn>
@@ -159,7 +169,7 @@ export default {
       me.loader = true;
       axios.get(`/productos/filter-type?state=D&&tipo=Pupusa`)
         .then(function (response) {
-          if (typeof(response.data) === 'object') {
+          if (typeof (response.data) === 'object') {
             me.pupusas = response.data;
           }
           me.loader = false;
@@ -178,7 +188,7 @@ export default {
       me.loader = true;
       axios.get(`/productos/filter-type?state=D&&tipo=Bebida`)
         .then(function (response) {
-          if (typeof(response.data) === 'object') {
+          if (typeof (response.data) === 'object') {
             me.bebidas = response.data
           }
           me.loader = false;
